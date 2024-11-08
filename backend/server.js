@@ -1,7 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-const port = 7280;
+let port = process.env.PORT;
+
+if (port == null || port == "") {
+  port = 8000;
+};
+
 const bodyParser = require("body-parser");
 const xml2js = require("xml2js");
 const multer = require('multer');
