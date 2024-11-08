@@ -148,5 +148,5 @@ async function generateTemplateCodesList(uploadedFile) {
 
 
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on https://template-code-getter-backend-82670bfc914e.herokuapp.com/`);
 });
