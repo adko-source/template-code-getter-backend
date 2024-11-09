@@ -40,19 +40,19 @@ app.get("/", (req, res) => {
 app.post('/attach_document', upload.single('file'), async (req, res) => {
   
   const uploadedFile = req.file;
- 
-  const codesList = await generateTemplateCodesList(uploadedFile);
+  const uploadedFileName = uploadedFile.originalname;
+  const result = await generateTemplateCodesList(uploadedFile);
 
-  res.json({ message: 'File uploaded successfully!', list: codesList });
+  res.json({ message: 'File uploaded successfully!', result: result, fileName: uploadedFileName });
 });
 
 async function generateTemplateCodesList(uploadedFile) {
   let templateCodesList = [];
+  let result = {"error": false, "templateCodesList": templateCodesList};
 
   console.log('uploadedFile', uploadedFile);
   
   const filePath = uploadedFile.path;
-  const fileName = uploadedFile.originalname; 
 
   // Read the Clinical Form XML
   await new Promise((resolve, reject) => {
@@ -60,7 +60,8 @@ async function generateTemplateCodesList(uploadedFile) {
       if (err) {
         console.error('Error reading the file:', err);
         reject(err);
-        return;
+        result.error = true;
+        return result;
       }
 
       // Parse XML data
@@ -68,7 +69,8 @@ async function generateTemplateCodesList(uploadedFile) {
         if (parseErr) {
           console.error('Error parsing XML:', parseErr);
           reject(parseErr);
-          return;
+          result.error = true;
+          return result;
         }
 
         // Traverse XML to extract required elements
@@ -82,7 +84,8 @@ async function generateTemplateCodesList(uploadedFile) {
     
     if(typeof node == 'undefined')
     {
-      return;
+      result.error = true;
+      return result;
     };
     
     if (node.$ && node.$.label && node.$.code) {
@@ -133,10 +136,11 @@ async function generateTemplateCodesList(uploadedFile) {
     });
   } catch (error) {
     console.error('Error uploading document:', error.message || error);
-  }
+  };
 
   console.log('templatecodeslist', templateCodesList);
-  return templateCodesList;
+
+  return result;
 };
 
 
