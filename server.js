@@ -81,47 +81,38 @@ async function generateTemplateCodesList(uploadedFile) {
   });
 
   function traverseXML(node) {
-    
-    if(typeof node == 'undefined')
-    {
-      result.error = true;
-      return result;
-    };
-    
+    if (typeof node === 'undefined') {
+        result.error = true;
+        return result;
+    }
+
+    // Process the current node if it has label and code attributes
     if (node.$ && node.$.label && node.$.code) {
         let textContent = '';
         const label = node.$.label;
         const code = node.$.code;
         textContent += `Label: ${label} | Template Code: {Appointment.Fields.${code}.List}\n`;
         templateCodesList.push(textContent);
-    };
+    }
 
-    // Loop through elements and get 'label' and 'code' attributes
-    Object.keys(node).forEach(key => {
-
+    // Process child elements in the **same order** they appear in XML
+    for (const key in node) {
         if (Array.isArray(node[key])) {
-
             node[key].forEach(child => {
-                
-                if (key === 'group' || key === 'panel' || key === 'radio' || key === 'check' || key === 'textbox' || key === 'list' || key === 'notes' || key === 'notes_with_history' || key === 'date' || key === 'future_date') {
-                    traverseXML(child);
-                };
-                
-                // For tables we want just the code of the parent <table> element and not the children
-                if (key === 'table')
-                {
+                // Handle table differently (if needed)
+                if (key === 'table' && child.$) {
                     let textContent = '';
                     const label = child.$.label;
                     const code = child.$.code;
-                  
                     textContent += `Label (Table): ${label} | Template Code: {Appointment.Fields.${code}.List}\n`;
                     templateCodesList.push(textContent);
-
-                };
-              
+                } else {
+                    // Process other elements recursively
+                    traverseXML(child);
+                }
             });
         }
-    });
+    }
   };
 
   try {
