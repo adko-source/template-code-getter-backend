@@ -6,3 +6,7 @@
 
 # Push to Heroku repo to redeploy app
 `git push heroku main`
+
+# To run locally
+`npm install`
+`npm run dev`
