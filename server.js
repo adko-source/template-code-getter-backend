@@ -91,7 +91,7 @@ async function generateTemplateCodesList(uploadedFile) {
         let textContent = '';
         const label = node.$.label;
         const code = node.$.code;
-        textContent += `Label: ${label} | Template Code: {Appointment.Fields.${code}.List}\n`;
+        textContent += `${label}: {Appointment.Fields.${code}.List}\n`;
         templateCodesList.push(textContent);
     }
 
@@ -104,7 +104,7 @@ async function generateTemplateCodesList(uploadedFile) {
                     let textContent = '';
                     const label = child.$.label;
                     const code = child.$.code;
-                    textContent += `Label (Table): ${label} | Template Code: {Appointment.Fields.${code}.List}\n`;
+                    textContent += `${label}: {Appointment.Fields.${code}.List}\n`;
                     templateCodesList.push(textContent);
                 } else {
                     // Process other elements recursively
@@ -133,14 +133,6 @@ async function generateTemplateCodesList(uploadedFile) {
 
   return result;
 };
-
-
-
-
-
-
-
-
 
 app.listen(port, () => {
   console.log(`Server is running on https://template-code-getter-backend-82670bfc914e.herokuapp.com/`);
